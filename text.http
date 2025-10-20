@@ -1,0 +1,25 @@
+### Testar cadastro de novo usuário
+POST http://localhost:3000/api/sign-up
+Content-Type: application/json
+
+{
+  "email": "teste1@email.com",
+  "password": "senhaforte123"
+}
+
+### Testar erro de email duplicado
+POST http://localhost:3000/api/sign-up
+Content-Type: application/json
+
+{
+  "email": "teste1@email.com",
+  "password": "outrasenha456"
+}
+
+### Testar erro de campos faltando
+POST http://localhost:3000/api/sign-up
+Content-Type: application/json
+
+{
+  "email": "teste2@email.com"
+}
