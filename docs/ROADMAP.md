@@ -13,12 +13,20 @@
     * [x] Projeto Next.js inicializado com Tailwind CSS v3 estável.
     * [x] Quadro de gerenciamento de tarefas (GitHub Projects) configurado.
     * [x] Estilos globais limpos e layout principal da aplicação definido.
-    * [ ] Roadmap do projeto adicionado ao repositório.
+    * [x] Roadmap do projeto adicionado ao repositório.
 
 ---
 
 ### **Semana 2 (20/Out - 26/Out): Autenticação de Usuários**
-* **Objetivo:** Permitir que um usuário crie uma conta, faça login e logout da aplicação.
+* **Objetivo:** Implementar um sistema de autenticação robusto, suportando tanto email/senha quanto logins sociais (OAuth).
+* **Entregáveis-Chave:**
+    * [x] Criar a UI para a página de Cadastro (`/sign-up`).
+    * [x] Construir o endpoint da API para registro manual (criação de usuário e criptografia de senha).
+    * [x] Criar a UI para a página de Login (`/sign-in`).
+    * [ ] Construir o endpoint da API para login manual (verificação de usuário e senha).
+    * [ ] Integrar a biblioteca `Auth.js` (NextAuth.js) para gerenciar todo o fluxo de autenticação.
+    * [ ] Adicionar o provedor de login social (OAuth) com o Google.
+    * [ ] Configurar rotas protegidas e gerenciamento de sessão.
 
 ---
 
