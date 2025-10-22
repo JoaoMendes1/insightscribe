@@ -1,0 +1,74 @@
+### ==================================
+###      TESTES DE CADASTRO (/api/sign-up)
+### ==================================
+
+### Testar cadastro de novo usuário (Deve dar 201 Created)
+# Use um email NOVO a cada vez que rodar este teste específico
+POST http://localhost:3000/api/sign-up
+Content-Type: application/json
+
+{
+  "email": "teste.novo.login@email.com", 
+  "password": "senhaforte123"
+}
+
+### Testar erro de email duplicado (Deve dar 409 Conflict)
+# Use um email que VOCÊ SABE que já existe no banco
+POST http://localhost:3000/api/sign-up
+Content-Type: application/json
+
+{
+  "email": "teste1@email.com", 
+  "password": "outrasenha456"
+}
+
+### Testar erro de campos faltando (Deve dar 400 Bad Request)
+POST http://localhost:3000/api/sign-up
+Content-Type: application/json
+
+{
+  "email": "teste.faltando@email.com"
+}
+
+
+### ==================================
+###      TESTES DE LOGIN (/api/sign-in)
+### ==================================
+
+### Testar login bem-sucedido (Deve dar 200 OK)
+# Use um email e SENHA CORRETA que você cadastrou antes
+POST http://localhost:3000/api/sign-in
+Content-Type: application/json
+
+{
+  "email": "teste1@email.com", 
+  "password": "senhaforte123" 
+}
+
+### Testar login com senha errada (Deve dar 401 Unauthorized)
+# Use um email que existe, mas com a senha errada
+POST http://localhost:3000/api/sign-in
+Content-Type: application/json
+
+{
+  "email": "teste1@email.com",
+  "password": "senhaERRADA999"
+}
+
+### Testar login com email inexistente (Deve dar 401 Unauthorized)
+# Use um email que você sabe que NÃO existe no banco
+POST http://localhost:3000/api/sign-in
+Content-Type: application/json
+
+{
+  "email": "email.nao.existe@fantasma.com",
+  "password": "qualquersenha"
+}
+
+### Testar login com campos faltando (Deve dar 400 Bad Request)
+POST http://localhost:3000/api/sign-in
+Content-Type: application/json
+
+{
+  "email": "teste1@email.com"
+}
