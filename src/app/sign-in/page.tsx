@@ -15,10 +15,35 @@ export default function SignInPage() {
     // Função onSubmit (POR ENQUANO VAZIA, SÓ PREVINE RECARREGAMENTO)
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError(null);
-        console.log('Dados do login:', { email, password }); // Apenas para teste inicial
-        // A lógica de chamar a API de login na próxima tarefa 
-        // setError('Funcionalidade ainda não implementada'); 
+        setError(null); // Limpa erros anteriores
+
+        try {
+            // Faz a requisição POST para a nossa API de LOGIN 
+            const response = await fetch('/api/sign-in', {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json', 
+                }, 
+                body: JSON.stringify({ email, password}),
+            }); 
+
+            const data = await response.json(); 
+
+            if (!response.ok) {
+                // Se deu erro (400, 401, 500), define a mensagem de erro no estado 
+                setError(data.message || 'Erro ao fazer login'); 
+            } else {
+                // Se deu sucesso (Status 200 OK)
+                console.log('Login bem-sucedido:', data.user);
+                // Redireciona para o dashboard (que ainda vamos criar)
+                router.push('/dashboard'); // <-- Destino mudou para /Dashboard 
+            }
+
+        } catch (fetchError) {
+            // Se houver erro na própria aquisição (ex: rede caiu)
+            setError('Não foi possível conectar ao servidor.'); 
+            console.error('Fetch error:', fetchError); 
+        }
     };
 
     return (
