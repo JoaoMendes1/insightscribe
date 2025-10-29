@@ -1,3 +1,5 @@
+/* Este ficheiro é um endopoint de API do Next.js. Ele espera reveber dados via POST. */
+
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
