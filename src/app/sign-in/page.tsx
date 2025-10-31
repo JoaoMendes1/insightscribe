@@ -1,116 +1,74 @@
-'use client' // Necessário para usar hooks como useState e useRouter
+"use client";
 
-import Link from 'next/link'
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
-    // Estados para email e senha (Mesmo padrão do cadastro)
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState<string | null>(null); // Estado para erros
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    const router = useRouter(); // Para redirecionamento futuro
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg(null);
 
-    // Função onSubmit (POR ENQUANO VAZIA, SÓ PREVINE RECARREGAMENTO)
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError(null); // Limpa erros anteriores
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
-        try {
-            // Faz a requisição POST para a nossa API de LOGIN 
-            const response = await fetch('/api/sign-in', {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json', 
-                }, 
-                body: JSON.stringify({ email, password}),
-            }); 
+    if (res?.error) {
+      setErrorMsg("Email ou senha incorretos.");
+      setLoading(false);
+      return;
+    }
 
-            const data = await response.json(); 
+    // Login bem-sucedido
+    await router.push("/dashboard");
+    router.refresh(); // 🔥 garante atualização do estado de sessão
+    setLoading(false);
+  };
 
-            if (!response.ok) {
-                // Se deu erro (400, 401, 500), define a mensagem de erro no estado 
-                setError(data.message || 'Erro ao fazer login'); 
-            } else {
-                // Se deu sucesso (Status 200 OK)
-                console.log('Login bem-sucedido:', data.user);
-                // Redireciona para o dashboard (que ainda vamos criar)
-                router.push('/dashboard'); // <-- Destino mudou para /Dashboard 
-            }
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 p-6 rounded-lg shadow-md flex flex-col gap-4 w-80"
+      >
+        <h1 className="text-xl font-semibold mb-2 text-center">Fazer Login</h1>
 
-        } catch (fetchError) {
-            // Se houver erro na própria aquisição (ex: rede caiu)
-            setError('Não foi possível conectar ao servidor.'); 
-            console.error('Fetch error:', fetchError); 
-        }
-    };
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="p-2 rounded bg-gray-700 text-white"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Senha"
+          className="p-2 rounded bg-gray-700 text-white"
+          required
+        />
 
-    return (
-        <div className="flex min-h-screen items-center justify-center">
-            <div className="w-full max-w-md rounded-lg bg-zinc-800 p-8 shadow-md">
-                <h1 className="mb-6 text-center text-3xl font-bold text-white">
-                    Fazer login {/* Título alterado */}
-                </h1>
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-600 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading ? "Entrando..." : "Entrar"}
+        </button>
 
-                {/* Área de erro */}
-                {error && (
-                    <div className="mb-4 rounded-md bg-red-900 p-3 text-center text-sm text-red-200">
-                        {error}
-                    </div>
-                )}
-
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="email"
-                            className='mb-2 block text-sm font-medium text-zinc-300'>
-                            Email
-                        </label>
-                        <input
-                            type="text"
-                            id='email'
-                            name='email'
-                            className='w-full rounded-md border-zinc-700 bg-zinc-700 p-2.5 text-white focus:border-blue-500 focus:ring-blue-500'
-                            placeholder='Digite seu e-mail'
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor=""
-                            className=''
-                        >
-                            Senha
-                        </label>
-
-                        <input
-                            type="password"
-                            id='password'
-                            name='password'
-                            className='w-full rounded-md border-zinc-700 bg-zinc-700 p-2.5 text-white focus:border-blue-500 focus:ring-blue-500'
-                            placeholder='Digite sua senha'
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-
-                    <button
-                        type='submit'
-                        className='w-full rounded-lg bg-blue-600 p-2.5 text-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-800'
-                    >
-                        Login {/* Texto do botão alterado */}
-                    </button>
-                </form>
-
-                <p className="mt-6 text-center text-sm text-zinc-400">
-                    Ainda não tem conta? {' '} {/* Texto e link alterados */}
-                    <Link href='/sign-up' className='font-medium text-blue-500 hover:underline'>
-                        Crie uma conta
-                    </Link>
-                </p>
-            </div>
-        </div>
-    )
+        {errorMsg && <p className="text-red-400 text-center">{errorMsg}</p>}
+      </form>
+    </div>
+  );
 }
