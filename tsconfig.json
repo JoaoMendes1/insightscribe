@@ -18,9 +18,12 @@
         "name": "next"
       }
     ],
+    // Isso permite que o "paths" funcione corretamente.
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
+    // --- FIM DA CORREÇÃO ---
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
